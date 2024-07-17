@@ -48,6 +48,13 @@ func (ws *WebSocket) Connect(ctx context.Context, wsURL string, header http.Head
 
 	ws.conn = conn
 	ws.r = bufio.NewReader(conn)
+
+	if header == nil {
+		header = http.Header{}
+	}
+	encodedUser := base64.StdEncoding.EncodeToString([]byte(u.User.String()))
+	header.Set("Authorization", fmt.Sprintf("Basic %s", encodedUser))
+
 	return ws.handshake(ctx, u, header)
 }
 
